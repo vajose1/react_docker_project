@@ -1,0 +1,23 @@
+docker run -it -p 3000:3000 -v /app/node_modules -v $(pwd):/app  npm_dev_docker
+docker run -it npm_dev_docker npm run test   ==> this will not update live tests... so we need to execute to the compose compose. attaching Means get "docker exec -it <container id> npm run test" 
+
+
+Another method is to add new service in docker compose
+With adding new serveice, it is not interactive. So we need to attach
+
+docker attach <container id>
+
+docker exec -it <container id> sh
+if you type "ps" we will get all processes. When we run docker attach, we always attach "STDIN" to the primary process of the container that is "npm". Ideally if we want to communicate we should attach to secondary process fo start test npm. But that is not possible. 
+
+So we have 2 solution. Neither of them is perfect.
+
+MULTI Step DOCKER Steps  ==> One with Build phase (Use node:alpine , Copy package.json file, Install dependencies, Run "npm run build" and another Run Phase (Use nginx, Copy over the result of 'npm run build' , Start nginx)
+
+In production environment, we dont eed to install only the application that is nneded for production environment
+
+
+docker build -t npm_production .
+docker run -p 3030:80 npm_production 
+
+
